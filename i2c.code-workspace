@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+    ],
+    "settings": {
+        "files.associations": {
+            "*.txt": "plaintext",
+            "stdint.h": "c",
+            "inttypes.h": "c",
+            "unistd.h": "c",
+            "assert.h": "c"
+        }
+    }
+}
