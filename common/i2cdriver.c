@@ -44,8 +44,7 @@ int openSerialPort(const char *portname) {
 
 
 size_t readFromSerialPort(int fd, uint8_t *b, size_t s) {
-    ssize_t n, t;
-    t = 0;
+    ssize_t n = 0, t = 0;
     while (t < s) {
         n = read(fd, b + t, s);
         if (n > 0)
@@ -54,9 +53,9 @@ size_t readFromSerialPort(int fd, uint8_t *b, size_t s) {
 
 #ifdef VERBOSE
     printf(" READ %d %d: ", (int)s, (int)n);
-    int i;
-    for (i = 0; i < s; i++)
+    for (int i = 0 ; i < s ; ++i) {
         printf("%02x ", 0xff & b[i]);
+    }
     printf("\n");
 #endif
 
@@ -69,7 +68,7 @@ void writeToSerialPort(int fd, const uint8_t *b, size_t s) {
 
 #ifdef VERBOSE
     printf("WRITE %u: ", (int)s);
-    for (int i = 0; i < s; i++) {
+    for (int i = 0 ; i < s ; ++i) {
         printf("%02x ", 0xff & b[i]);
     }
     printf("\n");
