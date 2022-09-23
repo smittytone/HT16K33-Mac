@@ -1,16 +1,20 @@
-# Mac-I2C-Driver 1.0.0
+# HT16K33 Mac 1.0.0
 
-A macOS-specific driver for the [Excamera Labs I2C Mini board](https://i2cdriver.com/mini.html). It is based on the [official code](https://github.com/jamesbowman/i2cdriver), but with the non-MacOS stuff removed and the code tidied a little.
+A macOS-specific driver for for [Holtek HT16K33](https://www.holtek.com/productdetail/-/vg/HT16K33A)-based 8x8 matrix displays connected to a host Mac using the [Excamera Labs I2C Mini board](https://i2cdriver.com/mini.html). It is based on the [official code](https://github.com/jamesbowman/i2cdriver), but with the non-MacOS stuff removed and the code tidied a little.
 
-It is the basis for the [Matrix Driver](#matrix-driver), which is intended to provide command line support for [Holtek HT16K33](https://www.holtek.com/productdetail/-/vg/HT16K33A)-based 8x8 matrix displays.
+![The matrix driver in action](./images/matrix_001.jpg)
 
-## Matrix Driver
+## The Matrix Driver
+
+You use the driver with this command-line call:
 
 ```shell
 matrix {device} [I2C address] [commands]
 ```
 
-The `{device}` is the path to the I2C Mini’s device file, eg. `/dev/cu.usbserial-DO029IEZ`.
+Arguments in braces `{}` are required; those in square brackets `[]` are optional.
+
+`{device}` is the path to the I2C Mini’s device file, eg. `/dev/cu.usbserial-DO029IEZ`.
 
 `[I2C address]` is an optional I2C address. By default, the HT16K33 uses the address `0x70`, but this can be changed.
 
@@ -37,6 +41,10 @@ matrix /dev/cu.usbserial-DO029IEZ 0x71 -p 0 0 -p 1 1 -p 2 2 -p 3 3 -p 4 4 -p 5 5
 You should note that the display buffer is not persisted across calls to `matrix`, so building up an image across calls will not work. The display is implicitly cleared with each new call.
 
 ## Build the Driver
+
+#### Xcode
+
+You can build the code from the accompanying Xcode project. However, I use the command line tool `xcodeuild`, called from the project directory, because this makes it easier to notarise and pakcage the binary. For more details, please see my script [`packcli.zsh`](https://github.com/smittytone/scripts/blob/main/packcli.zsh).
 
 #### Command Line
 
