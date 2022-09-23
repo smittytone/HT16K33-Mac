@@ -21,7 +21,7 @@ The `{device}` is the path to the I2C Mini’s device file, eg. `/dev/cu.usbseri
 These are the currently supported commands. Arguments in braces `{}` are required; those in square brackets `[]` are optional.
 
 | Command | Arguments | Description |
-| :-: | :-- |
+| :-: | :-: | :-- |
 | `-a` | `on`, `off` or none | Activate or deactivate the display. Once activated, the matrix will remain so for as long as it is powered. Pass `on` (or `1`) to activate, `off` (or `0`) to deactivate. Calling without an argument is a *de facto* activation |
 | `-b` | {0-15} | Set the brightness to a value between 0 (low but not off) and 15 (high) |
 | `-c` | {ascii_code} [true|false] | Plot the specified character, by code, on the display. If the second argument is included and is `true` (or `1`), the character will be centred on the display |
@@ -30,6 +30,6 @@ These are the currently supported commands. Arguments in braces `{}` are require
 
 ## Licences and Copyright
 
-The I2C driver is © 2019, James ????. It is licensed under the terms of the BSD 3 Licence.
+The I2C driver is © 2019, James ????. It is licensed under the terms of the BSD 3-Clause Licence.
 
 The Matrix driver is © 2022, Tony Smith (@smittytone). It is licensed under the terms of the MIT Licence.
