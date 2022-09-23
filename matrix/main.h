@@ -40,7 +40,8 @@
 /*
  * PROTOTYPES
  */
-int matrix_commands(int argc, char *argv[]);
+int     matrix_commands(int argc, char *argv[]);
+void    print_error(char* msg);
 
 
 #endif      // _MAIN_H_

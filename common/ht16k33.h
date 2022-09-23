@@ -31,9 +31,11 @@
 /*
  * CONSTANTS
  */
-#define     HT16K33_I2C_ADDR                0x70
+#define     HT16K33_I2C_ADDR                0x71
 #define     HT16K33_CMD_POWER_ON            0x21
+#define     HT16K33_CMD_POWER_OFF           0x20
 #define     HT16K33_CMD_DISPLAY_ON          0x81
+#define     HT16K33_CMD_DISPLAY_OFF         0x80
 #define     HT16K33_CMD_BRIGHTNESS          0xE0
 
 
@@ -50,6 +52,7 @@ void        HT16K33_print(const char *text, uint32_t delay_ms);
 void        HT16K33_define_character(const char* sprite, uint8_t index);
 void        HT16K33_draw_def_char(uint8_t v);
 void        HT16K33_rotate(uint8_t angle);
+void        HT16K33_set_char(uint8_t ascii, bool is_centred);
 
 
 #endif  // _HT16K33_HEADER_

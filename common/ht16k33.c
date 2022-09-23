@@ -172,6 +172,7 @@ void HT16K33_set_brightness(uint8_t brightness) {
  * This does not clear the LED -- call `HT16K33_draw()`.
  */
 void HT16K33_clear_buffer(void) {
+    fprintf(stdout, "CLEAR\n");
     for (uint8_t i = 0 ; i < 8 ; ++i) {
         display_buffer[i] = 0;
     }
@@ -217,6 +218,22 @@ void HT16K33_plot(uint8_t x, uint8_t y, bool is_set) {
         display_buffer[x] |= (1 << y);
     } else {
         display_buffer[x] &= ~(1 << y);
+    }
+}
+
+
+void HT16K33_set_char(uint8_t ascii, bool is_centred) {
+    HT16K33_clear_buffer();
+
+    uint8_t delta = 0;
+    if (is_centred) {
+        delta = (8 - strlen(CHARSET[ascii - 32])) >> 1;
+        fprintf(stdout, "** %li %i\n", strlen(CHARSET[ascii - 32]), delta);
+    }
+
+    for (uint8_t i = 0 ; i < 8 ; ++i) {
+        if (CHARSET[ascii - 32][i] == 0) break;
+        display_buffer[i + delta] = CHARSET[ascii - 32][i];;
     }
 }
 
