@@ -6,7 +6,7 @@
  * Licence: MIT
  *
  */
-#include "main.h"
+#include "i2cdriver.h"
 
 
 // ****************************   Serial port  ********************************

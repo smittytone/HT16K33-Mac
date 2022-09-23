@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     // Process arguments
     if (argc < 2) {
         // Insufficient args -- bail
-        printf("Usage: i2ccl <PORTNAME> <commands>\n");
+        printf("Usage: i2ccl <DEVICE_PATH> <commands>\n");
         exit(1);
     } else {
         // Connect...

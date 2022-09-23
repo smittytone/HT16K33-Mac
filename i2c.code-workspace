@@ -10,7 +10,9 @@
             "stdint.h": "c",
             "inttypes.h": "c",
             "unistd.h": "c",
-            "assert.h": "c"
+            "assert.h": "c",
+            "i2cdriver.h": "c",
+            "ht16k33.h": "c"
         }
     }
 }

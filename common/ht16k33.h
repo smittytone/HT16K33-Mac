@@ -11,6 +11,24 @@
 
 
 /*
+ * INCLUDES
+ */
+#include <string.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <errno.h>
+#include <time.h>
+#include <assert.h>
+#include <inttypes.h>
+// App includes
+#include "i2cdriver.h"
+
+
+/*
  * CONSTANTS
  */
 #define     HT16K33_I2C_ADDR                0x70

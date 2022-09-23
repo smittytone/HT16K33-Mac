@@ -6,11 +6,11 @@
  * Licence: MIT
  *
  */
-#include "main.h"
+#include "ht16k33.h"
 
 
 // Defined in `main.c`
-I2CDriver i2c;
+extern I2CDriver i2c;
 
 // The Ascii character set
 const char CHARSET[128][6] = {
@@ -147,8 +147,10 @@ void HT16K33_init(uint8_t angle) {
  * @param cmd: The single-byte command.
  */
 void HT16K33_write_cmd(uint8_t cmd) {
-    //HAL_I2C_Master_Transmit(&i2c, HT16K33_I2C_ADDR << 1, &cmd, 1, 100);
-
+    // Already connected at this stage
+    i2c_start(&i2c, HT16K33_I2C_ADDR, 0);
+    i2c_write(&i2c, &cmd, 1);
+    i2c_stop(&i2c);
 }
 
 
@@ -196,7 +198,9 @@ void HT16K33_draw(void) {
     }
 
     // Display the buffer and flash the LED
-    //HAL_I2C_Master_Transmit(&i2c, HT16K33_I2C_ADDR << 1, tx_buffer, sizeof(tx_buffer), 100);
+    i2c_start(&i2c, HT16K33_I2C_ADDR, 0);
+    i2c_write(&i2c, tx_buffer, 17);
+    i2c_stop(&i2c);
 }
 
 
