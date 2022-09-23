@@ -11,6 +11,7 @@
 
 // Defined in `main.c`
 extern I2CDriver i2c;
+extern int i2c_address;
 
 // The Ascii character set
 const char CHARSET[128][6] = {
@@ -148,7 +149,7 @@ void HT16K33_init(uint8_t angle) {
  */
 void HT16K33_write_cmd(uint8_t cmd) {
     // Already connected at this stage
-    i2c_start(&i2c, HT16K33_I2C_ADDR, 0);
+    i2c_start(&i2c, i2c_address, 0);
     i2c_write(&i2c, &cmd, 1);
     i2c_stop(&i2c);
 }
@@ -172,7 +173,6 @@ void HT16K33_set_brightness(uint8_t brightness) {
  * This does not clear the LED -- call `HT16K33_draw()`.
  */
 void HT16K33_clear_buffer(void) {
-    fprintf(stdout, "CLEAR\n");
     for (uint8_t i = 0 ; i < 8 ; ++i) {
         display_buffer[i] = 0;
     }
@@ -199,7 +199,7 @@ void HT16K33_draw(void) {
     }
 
     // Display the buffer and flash the LED
-    i2c_start(&i2c, HT16K33_I2C_ADDR, 0);
+    i2c_start(&i2c, i2c_address, 0);
     i2c_write(&i2c, tx_buffer, 17);
     i2c_stop(&i2c);
 }
@@ -223,12 +223,9 @@ void HT16K33_plot(uint8_t x, uint8_t y, bool is_set) {
 
 
 void HT16K33_set_char(uint8_t ascii, bool is_centred) {
-    HT16K33_clear_buffer();
-
     uint8_t delta = 0;
     if (is_centred) {
         delta = (8 - strlen(CHARSET[ascii - 32])) >> 1;
-        fprintf(stdout, "** %li %i\n", strlen(CHARSET[ascii - 32]), delta);
     }
 
     for (uint8_t i = 0 ; i < 8 ; ++i) {
@@ -290,7 +287,8 @@ void HT16K33_print(const char *text, uint32_t delay_ms) {
         HT16K33_draw();
         cursor++;
         if (cursor > length - 8) break;
-        //sleep_ms(display_angle == 0 ? delay_ms : (delay_ms * 2 / 3));
+        
+        HT16K33_sleep_ms(display_angle == 0 ? delay_ms : (delay_ms * 2 / 3));
     };
 }
 
@@ -341,4 +339,17 @@ void HT16K33_rotate(uint8_t angle) {
 
     // Swap the matrices
     memcpy(display_buffer, temp, 8);
+}
+
+
+void HT16K33_sleep_ms(int ms) {
+    struct timespec ts;
+    int res;
+
+    ts.tv_sec = ms / 1000;
+    ts.tv_nsec = (ms % 1000) * 1000000;
+
+    do {
+        res = nanosleep(&ts, &ts);
+    } while (res && errno == EINTR);
 }
