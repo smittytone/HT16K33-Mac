@@ -114,45 +114,39 @@ const char CHARSET[128][6] = {
     "\x60\x90\x90\x60\x00"       // Degrees sign - Ascii 127
 };
 
-// User-defined chars store
-uint8_t def_chars[32][8];
-
 // Display buffer
 uint8_t display_buffer[8];
 uint8_t display_angle = 0;
 
 
+/**
+ * @brief Power the display on or off
+ *
+ * @param is_on:    Whether to power up (`true`) the display or
+ *                shut it down (`false`).
+ */
+void HT16K33_power(bool is_on) {
+    if (is_on) {
+        HT16K33_write_cmd(HT16K33_CMD_POWER_ON);
+        HT16K33_write_cmd(HT16K33_CMD_DISPLAY_ON);
+    } else {
+        HT16K33_write_cmd(HT16K33_CMD_DISPLAY_OFF);
+        HT16K33_write_cmd(HT16K33_CMD_POWER_OFF);
+    }
+}
+
 
 /**
- * @brief Power on the LEDs and set the brightness.
+ * @brief Set the diplay's angle of rotation.
+ *
+ *  @param angle: The angle of rotation as an integer multiple of 90 degrees.
  */
-void HT16K33_init(uint8_t angle) {
-    HT16K33_write_cmd(HT16K33_CMD_POWER_ON);        // System on
-    HT16K33_write_cmd(HT16K33_CMD_DISPLAY_ON);      // Display on
-    HT16K33_set_brightness(2);                      // Set brightness
-    HT16K33_clear_buffer();
-
+void HT16K33_set_angle(uint8_t angle) {
     if (angle != 0) {
         if (angle > 0 && angle < 4) {
             display_angle = angle;
         }
     }
-
-    // Zero the user-define character store
-    memset((void *)def_chars, 0x00, 256);
-}
-
-
-/**
- * @brief Issue a single command byte to the HT16K33.
- *
- * @param cmd: The single-byte command.
- */
-void HT16K33_write_cmd(uint8_t cmd) {
-    // Already connected at this stage
-    i2c_start(&i2c, i2c_address, 0);
-    i2c_write(&i2c, &cmd, 1);
-    i2c_stop(&i2c);
 }
 
 
@@ -162,7 +156,6 @@ void HT16K33_write_cmd(uint8_t cmd) {
  * @param brightness: The display brightness (1-15).
  */
 void HT16K33_set_brightness(uint8_t brightness) {
-    // Set the LED brightness
     if (brightness > 15) brightness = 15;
     HT16K33_write_cmd(HT16K33_CMD_BRIGHTNESS | brightness);
 }
@@ -231,7 +224,14 @@ void HT16K33_set_char(uint8_t ascii, bool is_centred) {
 
     for (uint8_t i = 0 ; i < 8 ; ++i) {
         if (CHARSET[ascii - 32][i] == 0) break;
-        display_buffer[i + delta] = CHARSET[ascii - 32][i];;
+        display_buffer[i + delta] = CHARSET[ascii - 32][i];
+    }
+}
+
+
+void HT16K33_set_glyph(uint8_t* bytes) {
+    for (uint8_t i = 0 ; i < 8 ; ++i) {
+        display_buffer[i] = bytes[i];
     }
 }
 
@@ -295,28 +295,10 @@ void HT16K33_print(const char *text, uint32_t delay_ms) {
 
 
 /**
- *  @brief Draw a pre-defined character on the screen.
+ *  @brief Rotate the display. Not a public function.
  *
- *  @param code: The character code (0-32) of the user-defined character.
+ *  @param angle: The angle of rotation as an integer multiple of 90 degrees.
  */
-void HT16K33_draw_def_char(uint8_t code) {
-    assert(code < 32);
-    for (uint8_t i = 0 ; i < 8 ; ++i) display_buffer[i] = def_chars[code][i];
-}
-
-
-/**
- *  @brief Set a pre-defined character on the screen.
- *
- *  @param sprite: A string of hex chars defining the character.
- *  @param code:   The character code (0-32) of the user-defined character.
- */
-void HT16K33_define_character(const char* sprite, uint8_t code) {
-    assert(code < 32);
-    memcpy(def_chars[code], sprite, 8);
-}
-
-
 void HT16K33_rotate(uint8_t angle) {
     uint8_t temp[8] = { 0 };
     uint8_t a = 0;
@@ -343,6 +325,11 @@ void HT16K33_rotate(uint8_t angle) {
 }
 
 
+/**
+ * @brief Sleep the thread for the specified period in milliseconds.
+ *
+ * @param ms: The sleep period.
+ */
 void HT16K33_sleep_ms(int ms) {
     struct timespec ts;
     int res;
@@ -353,4 +340,17 @@ void HT16K33_sleep_ms(int ms) {
     do {
         res = nanosleep(&ts, &ts);
     } while (res && errno == EINTR);
+}
+
+
+/**
+ * @brief Issue a single command byte to the HT16K33.
+ *
+ * @param cmd: The single-byte command.
+ */
+void HT16K33_write_cmd(uint8_t cmd) {
+    // NOTE Already connected at this stage
+    i2c_start(&i2c, i2c_address, 0);
+    i2c_write(&i2c, &cmd, 1);
+    i2c_stop(&i2c);
 }

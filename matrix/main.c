@@ -74,13 +74,7 @@ int matrix_commands(int argc, char* argv[], int delta) {
                         }
 
                         // Apply the command
-                        if (is_on) {
-                            HT16K33_write_cmd(HT16K33_CMD_POWER_ON);
-                            HT16K33_write_cmd(HT16K33_CMD_DISPLAY_ON);
-                        } else {
-                            HT16K33_write_cmd(HT16K33_CMD_DISPLAY_OFF);
-                            HT16K33_write_cmd(HT16K33_CMD_POWER_OFF);
-                        }
+                        HT16K33_power(is_on);
                     }
                     break;
 
@@ -146,7 +140,39 @@ int matrix_commands(int argc, char* argv[], int delta) {
                         return 1;
                     }
 
-                case 'p':   // PLOT A POINT
+            case 'g':   // DISPLAY GLYPH
+                {
+                    // Get the required argument
+                    if (i < argc - 1) {
+                        token = argv[++i];
+                        if (token[0] != '-') {
+                            uint8_t bytes[8] = {0};
+                            char *endptr = token;
+                            size_t length = 0;
+
+                            while (length < sizeof(bytes)) {
+                                bytes[length++] = (uint8_t)strtol(endptr, &endptr, 0);
+                                if (*endptr == '\0') break;
+                                if (*endptr != ',') {
+                                    print_error("Invalid bytes");
+                                    return 1;
+                                }
+
+                                endptr++;
+                            }
+                            
+                            // Perform the action
+                            HT16K33_set_glyph(bytes);
+                            HT16K33_draw();
+                            break;
+                        }
+                    }
+
+                    print_error("No Ascii value supplied");
+                    return 1;
+                }
+            
+            case 'p':   // PLOT A POINT
                     {
                         // Get two required arguments
                         long x = -1, y = -1;
