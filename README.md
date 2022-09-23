@@ -1,8 +1,8 @@
 # Mac-I2C-Driver 1.0.0
 
-A macOS-specific driver for the [Excamera Labs I2C Mini board](https://i2cdriver.com/mini.html). It is based on the official code, but with the non-MacOS stuff removed and the code tidied a little.
+A macOS-specific driver for the [Excamera Labs I2C Mini board](https://i2cdriver.com/mini.html). It is based on the [official code](https://github.com/jamesbowman/i2cdriver), but with the non-MacOS stuff removed and the code tidied a little.
 
-It is the basis for the [Matrix Driver](#matrix-driver), which is intended to provide command line support for Holtek HT16K33-based 8x8 matrix displays.
+It is the basis for the [Matrix Driver](#matrix-driver), which is intended to provide command line support for [Holtek HT16K33](https://www.holtek.com/productdetail/-/vg/HT16K33A)-based 8x8 matrix displays.
 
 ## Matrix Driver
 
@@ -27,6 +27,14 @@ These are the currently supported commands. Arguments in braces `{}` are require
 | `-c` | {ascii_code} [`true`\|`false`] | Plot the specified character, by code, on the display. If the second argument is included and is `true` (or `1`), the character will be centred on the display |
 | `-p` | {x} {y} [1\|0] | Plot a point as the coordinates `{x,y}`. If the third argument is `1` (or missing), the pixel will be set; if it is `0`, the pixel will be cleared |
 | `-t` | {string} [delay] | Scroll the specified string. The second argument is an optional delay be between column shifts in milliseconds. Default: 250ms |
+
+Multiple commands can be issued by sequencing them at the command line. For example:
+
+```shell
+matrix /dev/cu.usbserial-DO029IEZ 0x71 -p 0 0 -p 1 1 -p 2 2 -p 3 3 -p 4 4 -p 5 5 -p 6 6 -p 7 7 
+```
+
+You should note that the display buffer is not persisted across calls to `matrix`, so building up an image across calls will not work. The display is implicitly cleared with each new call.
 
 ## Build the Driver
 

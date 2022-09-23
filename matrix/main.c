@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
         if (!i2c.connected) exit(1);
 
         // Check for an alternative I2C address
+        int delta = 2;
         if (argc > 2) {
             char* token = argv[2];
             if (token[0] != '-') {
@@ -39,11 +40,12 @@ int main(int argc, char *argv[]) {
                 }
 
                 fprintf(stdout, "Setting I2C address to 0x%02X\n", i2c_address);
+                delta = 3;
             }
         }
 
         // ...and issue passed in commands/data
-        exit(matrix_commands(argc - 2, argv + 2));
+        exit(matrix_commands(argc - delta, argv + delta));
     }
 }
 
@@ -169,6 +171,8 @@ int matrix_commands(int argc, char *argv[]) {
                                             if (token[0] != '-') {
                                                 ink = strtol(token, NULL, 0);
                                                 if (ink != 1 && ink != 0) ink = 1;
+                                            } else {
+                                                i -= 1;
                                             }
                                         }
 
@@ -198,6 +202,8 @@ int matrix_commands(int argc, char *argv[]) {
                                 token = argv[++i];
                                 if (token[0] != '-') {
                                     scroll_delay = strtol(token, NULL, 0);
+                                } else {
+                                    i -= 1;
                                 }
                             }
                             
