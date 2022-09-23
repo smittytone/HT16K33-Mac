@@ -30,11 +30,17 @@ These are the currently supported commands. Arguments in braces `{}` are require
 
 ## Build the Driver
 
+#### Command Line
+
 1. Clone this repo and `cd` into the directory.
 1. Run `cmake -S . -B build`
 1. Run `cmake --build build`
 
 The binary, `matrix` can be found in the `build/matrix/` directory.
+
+#### Visual Studio Code
+
+Alternatively, open the workspace file `i2c.code-workspace` in [Microsoft Visual Studio Code](https://visualstudio.microsoft.com), select a compiler (“kit”) and click **Build**. To use Visual Studio Code, you will first need to install the [`CMake`](https://marketplace.visualstudio.com/items?itemName=twxs.cmake) and [`CMake Tools`](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools) extensions.
 
 ## Licences and Copyright
 
