@@ -2,8 +2,8 @@
  *
  * I2C driver w. HT16K33
  * Version 1.0.0
- * Copyright © 2022, smittytone
- * Licence: MIT
+ * Copyright © 2019, James Bowman
+ * Licence: BSD 3-Clause
  *
  */
 #include "i2cdriver.h"
@@ -43,7 +43,7 @@ int openSerialPort(const char *portname) {
 }
 
 
-int readFromSerialPort(int fd, uint8_t *b, size_t s) {
+size_t readFromSerialPort(int fd, uint8_t *b, size_t s) {
     ssize_t n, t;
     t = 0;
     while (t < s) {
@@ -145,7 +145,7 @@ void i2c_connect(I2CDriver *sd, const char* portname) {
         writeToSerialPort(sd->port, tx, 2);
 
         uint8_t rx[1];
-        int n = readFromSerialPort(sd->port, rx, 1);
+        size_t n = readFromSerialPort(sd->port, rx, 1);
         if ((n != 1) || (rx[0] != tests[i]))
         return;
     }
@@ -169,7 +169,7 @@ void i2c_getstatus(I2CDriver *sd)   {
     uint8_t mode[80];
 
     charCommand(sd, '?');
-    int bytesRead = readFromSerialPort(sd->port, readbuffer, 80);
+    size_t bytesRead = readFromSerialPort(sd->port, readbuffer, 80);
     readbuffer[bytesRead] = 0;
 
 #ifdef VERBOSE
@@ -208,7 +208,7 @@ uint8_t i2c_reset(I2CDriver *sd) {
 }
 
 
-int i2c_start(I2CDriver *sd, uint8_t dev, uint8_t op) {
+size_t i2c_start(I2CDriver *sd, uint8_t dev, uint8_t op) {
     uint8_t start[2] = {'s', (uint8_t)((dev << 1) | op)};
     writeToSerialPort(sd->port, start, sizeof(start));
     return i2c_ack(sd);
@@ -220,7 +220,7 @@ void i2c_stop(I2CDriver *sd) {
 }
 
 
-int i2c_write(I2CDriver *sd, const uint8_t bytes[], size_t nn) {
+size_t i2c_write(I2CDriver *sd, const uint8_t bytes[], size_t nn) {
     int ack = 1;
 
     for (size_t i = 0 ; i < nn ; i += 64) {
@@ -357,7 +357,7 @@ int i2c_commands(I2CDriver *sd, int argc, char *argv[]) {
             case 'w':   // WRITE TO BUS
                 {
                     token = argv[++i];
-                    unsigned int dev = strtol(token, NULL, 0);
+                    long dev = strtol(token, NULL, 0);
 
                     token = argv[++i];
                     uint8_t bytes[8192];
@@ -383,7 +383,7 @@ int i2c_commands(I2CDriver *sd, int argc, char *argv[]) {
             case 'r':   // READ FROM BUS
                 {
                     token = argv[++i];
-                    unsigned int dev = strtol(token, NULL, 0);
+                    long dev = strtol(token, NULL, 0);
 
                     token = argv[++i];
                     size_t nn = strtol(token, NULL, 0);

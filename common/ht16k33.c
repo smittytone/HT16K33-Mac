@@ -13,6 +13,7 @@
 extern I2CDriver i2c;
 extern int i2c_address;
 
+
 // The Ascii character set
 const char CHARSET[128][6] = {
     "\x00\x00\x00",              // space - Ascii 32

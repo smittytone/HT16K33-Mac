@@ -2,8 +2,8 @@
  *
  * I2C driver w. HT16K33
  * Version 1.0.0
- * Copyright © 2022, smittytone
- * Licence: MIT
+ * Copyright © 2019, James Bowman
+ * Licence: BSD 3-Clause
  *
  */
 #ifndef _I2CDRIVER_H
@@ -66,9 +66,9 @@ typedef struct {
  */
 void        i2c_connect(I2CDriver *sd, const char* portname);
 void        i2c_getstatus(I2CDriver *sd);
-int         i2c_write(I2CDriver *sd, const uint8_t bytes[], size_t nn);
+size_t      i2c_write(I2CDriver *sd, const uint8_t bytes[], size_t nn);
 void        i2c_read(I2CDriver *sd, uint8_t bytes[], size_t nn);
-int         i2c_start(I2CDriver *sd, uint8_t dev, uint8_t op);
+size_t      i2c_start(I2CDriver *sd, uint8_t dev, uint8_t op);
 void        i2c_stop(I2CDriver *sd);
 void        i2c_monitor(I2CDriver *sd, int enable);
 void        i2c_capture(I2CDriver *sd);

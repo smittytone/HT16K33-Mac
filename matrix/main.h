@@ -33,14 +33,14 @@
 
 
 // App includes
-#include "../common/i2cdriver.h"
-#include "../common/ht16k33.h"
+#include "i2cdriver.h"
+#include "ht16k33.h"
 
 
 /*
  * PROTOTYPES
  */
-int     matrix_commands(int argc, char *argv[]);
+int     matrix_commands(int argc, char* argv[], int delta);
 void    print_error(char* msg);
 
 

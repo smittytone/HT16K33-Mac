@@ -13,7 +13,7 @@ I2CDriver i2c;
 int i2c_address = HT16K33_I2C_ADDR;
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 
     // Process arguments
     if (argc < 2) {
@@ -32,32 +32,32 @@ int main(int argc, char *argv[]) {
             char* token = argv[2];
             if (token[0] != '-') {
                 // Not a command, so an address
-                i2c_address = strtol(token, NULL, 0);
+                i2c_address = (int)strtol(token, NULL, 0);
                 
                 if (i2c_address < 0 || i2c_address > 0x7F) {
                     print_error("I2C address out of range");
                     exit(1);
                 }
 
-                fprintf(stdout, "Setting I2C address to 0x%02X\n", i2c_address);
+                fprintf(stdout, "I2C address: 0x%02X\n", i2c_address);
                 delta = 3;
             }
         }
 
         // ...and issue passed in commands/data
-        exit(matrix_commands(argc - delta, argv + delta));
+        exit(matrix_commands(argc, argv, delta));
     }
 }
 
 
-int matrix_commands(int argc, char *argv[]) {
-    for (int i = 0 ; i < argc ; ++i) {
-        char *token = argv[i];
+int matrix_commands(int argc, char* argv[], int delta) {
+    for (int i = delta ; i < argc ; ++i) {
+        char* token = argv[i];
 
         if (token[0] == '-') {
             switch (token[1]) {
                 case 'a':   // ACTIVATE (DEFAULT) OR DEACTIVATE DISPLAY
-                    {   
+                    {
                         // Check for and get the optional argument
                         bool is_on = true;
                         if (i < argc - 1) {
@@ -79,7 +79,7 @@ int matrix_commands(int argc, char *argv[]) {
                             HT16K33_write_cmd(HT16K33_CMD_DISPLAY_ON);
                         } else {
                             HT16K33_write_cmd(HT16K33_CMD_DISPLAY_OFF);
-                            HT16K33_write_cmd(HT16K33_CMD_POWER_OFF);    
+                            HT16K33_write_cmd(HT16K33_CMD_POWER_OFF);
                         }
                     }
                     break;
@@ -90,7 +90,7 @@ int matrix_commands(int argc, char *argv[]) {
                         if (i < argc - 1) {
                             token = argv[++i];
                             if (token[0] != '-') {
-                                int brightness = strtol(token, NULL, 0);
+                                long brightness = strtol(token, NULL, 0);
 
                                 if (brightness < 0 || brightness > 15) {
                                     print_error("Brightness value out of range (0-15)");
@@ -113,7 +113,7 @@ int matrix_commands(int argc, char *argv[]) {
                         if (i < argc - 1) {
                             token = argv[++i];
                             if (token[0] != '-') {
-                                int ascii = strtol(token, NULL, 0);
+                                long ascii = strtol(token, NULL, 0);
 
                                 if (ascii < 32 || ascii > 127) {
                                     print_error("Ascii value out of range (32-127)");
@@ -137,19 +137,19 @@ int matrix_commands(int argc, char *argv[]) {
 
                                 // Perform the action
                                 HT16K33_set_char(ascii, do_centre);
-                                HT16K33_draw(); 
+                                HT16K33_draw();
                                 break;
                             }
                         }
 
                         print_error("No Ascii value supplied");
-                        return 1;               
+                        return 1;
                     }
 
                 case 'p':   // PLOT A POINT
                     {
                         // Get two required arguments
-                        int x = -1, y = -1;
+                        long x = -1, y = -1;
                         if (i < argc - 1) {
                             token = argv[++i];
                             if (token[0] != '-') {
@@ -165,7 +165,7 @@ int matrix_commands(int argc, char *argv[]) {
                                         }
 
                                         // Get an optional argument
-                                        int ink = 1;
+                                        long ink = 1;
                                         if (i < argc - 1) {
                                             token = argv[++i];
                                             if (token[0] != '-') {
@@ -178,7 +178,7 @@ int matrix_commands(int argc, char *argv[]) {
 
                                         // Perform the action
                                         HT16K33_plot((uint8_t)x, (uint8_t)y, ink == 1);
-                                        HT16K33_draw(); 
+                                        HT16K33_draw();
                                         break;
                                     }
                                 }
@@ -186,7 +186,7 @@ int matrix_commands(int argc, char *argv[]) {
                         }
 
                         print_error("No co-ordinate value(s) supplied");
-                        return 1; 
+                        return 1;
                     }
                     break;
 
@@ -197,7 +197,7 @@ int matrix_commands(int argc, char *argv[]) {
                             char *scroll_string = argv[++i];
 
                             // Get an optional argument
-                            int scroll_delay = 250;
+                            long scroll_delay = 100;
                             if (i < argc - 1) {
                                 token = argv[++i];
                                 if (token[0] != '-') {
@@ -213,7 +213,7 @@ int matrix_commands(int argc, char *argv[]) {
                         }
 
                         print_error("No string supplied");
-                        return 1; 
+                        return 1;
                     }
 
 

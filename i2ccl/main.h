@@ -2,7 +2,7 @@
  *
  * I2C driver w. HT16K33
  * Version 1.0.0
- * Copyright © 2022, smittytone
+ * Copyright © 2019, James Bowan; 2022, smittytone
  * Licence: MIT
  *
  */
@@ -33,7 +33,7 @@
 
 
 // App includes
-#include "../common/i2cdriver.h"
+#include "i2cdriver.h"
 
 
 #endif      // _MAIN_H_
