@@ -172,6 +172,9 @@ int matrix_commands(int argc, char* argv[], int delta) {
                     return 1;
                 }
             
+            case 'h':   // HELP
+                    show_help();
+            
             case 'p':   // PLOT A POINT
                     {
                         // Get two required arguments
@@ -257,4 +260,22 @@ int matrix_commands(int argc, char* argv[], int delta) {
 
 void print_error(char* msg) {
     fprintf(stderr, "[ERROR] %s\n", msg);
+}
+
+
+void show_help() {
+    fprintf(stdout, "matrix {device} [sddress] [commands]\n\n");
+    fprintf(stdout, "Commands:\n");
+    fprintf(stdout, "  -a [on|off]             Activate/deactivate the display. Default: on.\n");
+    fprintf(stdout, "  -b {0-15}               Set the display brightness from low (0) to high (15).\n");
+    fprintf(stdout, "  -c {ascii} [true|false] Draw the Ascii character on the screen, and optionally\n");
+    fprintf(stdout, "                          set it to be centred (true).\n");
+    fprintf(stdout, "  -g {glyph}              Draw the user-defined character on the screen. The definition\n");
+    fprintf(stdout, "                          is a string of eight comma-separated 8-bit hex values, eg.\n");
+    fprintf(stdout, "                          '0x3C,0x42,0xA9,0x85,0x85,0xA9,0x42,0x3C'.\n");
+    fprintf(stdout, "  -p {x} {y} [1|0]        Set or clear the specified pixel. X and Y coordinates are in\n");
+    fprintf(stdout, "                          the range 0-7.\n");
+    fprintf(stdout, "  -t {string} [delay]     Scroll the specified string. The second argument is an optional\n");
+    fprintf(stdout, "                          delay be between column shifts in milliseconds. Default: 250ms.\n\n");
+    exit(0);
 }

@@ -42,6 +42,7 @@
  */
 int     matrix_commands(int argc, char* argv[], int delta);
 void    print_error(char* msg);
+void    show_help(void);
 
 
 #endif      // _MAIN_H_
