@@ -42,28 +42,32 @@
  * STRUCTURES
  */
 typedef struct {
-    int connected;              // Set to 1 when connected
-    HANDLE port;
-    char      model[16],
-                serial[9];      // Serial number of USB device
-    uint64_t  uptime;           // time since boot (seconds)
-    float     voltage_v,        // USB voltage (Volts)
-                current_ma,     // device current (mA)
-                temp_celsius;   // temperature (C)
-    unsigned int mode;          // I2C 'I' or bitbang 'B' mode
-    unsigned int sda;           // SDA state, 0 or 1
-    unsigned int scl;           // SCL state, 0 or 1
-    unsigned int speed;         // I2C line speed (in kHz)
-    unsigned int pullups;       // pullup state (6 bits, 1=enabled)
-    unsigned int
-                ccitt_crc,      // Hardware CCITT CRC
-                e_ccitt_crc;    // Host CCITT CRC, should match
+    int             connected;          // Set to 1 when connected
+    HANDLE          port;
+    char            model[16],
+                    serial[9];          // Serial number of USB device
+    uint64_t        uptime;             // time since boot (seconds)
+    float           voltage_v,          // USB voltage (Volts)
+                    current_ma,         // device current (mA)
+                    temp_celsius;       // temperature (C)
+    unsigned int    mode;               // I2C 'I' or bitbang 'B' mode
+    unsigned int    sda;                // SDA state, 0 or 1
+    unsigned int    scl;                // SCL state, 0 or 1
+    unsigned int    speed;              // I2C line speed (in kHz)
+    unsigned int    pullups;            // pullup state (6 bits, 1=enabled)
+    unsigned int    ccitt_crc,          // Hardware CCITT CRC
+                    e_ccitt_crc;        // Host CCITT CRC, should match
 } I2CDriver;
 
 
 /*
  * PROTOTYPES
  */
+
+int         openSerialPort(const char *portname);
+size_t      readFromSerialPort(int fd, uint8_t *b, size_t s);
+void        writeToSerialPort(int fd, const uint8_t *b, size_t s);
+
 void        i2c_connect(I2CDriver *sd, const char* portname);
 void        i2c_getstatus(I2CDriver *sd);
 size_t      i2c_write(I2CDriver *sd, const uint8_t bytes[], size_t nn);
@@ -73,8 +77,9 @@ void        i2c_stop(I2CDriver *sd);
 void        i2c_monitor(I2CDriver *sd, int enable);
 void        i2c_capture(I2CDriver *sd);
 int         i2c_commands(I2CDriver *sd, int argc, char *argv[]);
-static void charCommand(I2CDriver *sd, char c);
-static void printBadCommandHelp(char* token);
+
+void        charCommand(I2CDriver *sd, char c);
+void        printBadCommandHelp(char* token);
 
 
 #endif  // I2CDRIVER_H

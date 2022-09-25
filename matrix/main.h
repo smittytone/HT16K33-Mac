@@ -36,6 +36,7 @@
 #include "i2cdriver.h"
 #include "ht16k33.h"
 
+#define VERBOSE 1
 
 /*
  * PROTOTYPES

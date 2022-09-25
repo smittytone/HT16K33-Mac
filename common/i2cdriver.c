@@ -21,23 +21,16 @@ int openSerialPort(const char *portname) {
     }
 
     tcgetattr(fd, &Settings);
-
-    #if defined(B1000000)
-    cfsetispeed(&Settings, B1000000);
-    cfsetospeed(&Settings, B1000000);
-    #endif
-
     cfmakeraw(&Settings);
     Settings.c_cc[VMIN] = 1;
+    
     if (tcsetattr(fd, TCSANOW, &Settings) != 0) {
         perror("Serial settings");
         return -1;
     }
 
-    #if !defined(B1000000)
     speed_t speed = (speed_t)1000000;
     ioctl(fd, IOSSIOSPEED, &speed);
-    #endif
 
     return fd;
 }
@@ -112,6 +105,7 @@ static const uint16_t crc_table[256] = {
     0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
 };
 
+
 static void crc_update(I2CDriver *sd, const uint8_t *data, size_t data_len) {
     unsigned int tbl_idx;
     uint16_t crc = sd->e_ccitt_crc;
@@ -134,7 +128,7 @@ void i2c_connect(I2CDriver *sd, const char* portname) {
     sd->port = openSerialPort(portname);
     if (sd->port == -1) return;
 
-    // Clear the FIFO
+    // Clear the FIFO?
     writeToSerialPort(sd->port, (uint8_t*)"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", 64);
 
     // Test the port
@@ -145,8 +139,7 @@ void i2c_connect(I2CDriver *sd, const char* portname) {
 
         uint8_t rx[1];
         size_t n = readFromSerialPort(sd->port, rx, 1);
-        if ((n != 1) || (rx[0] != tests[i]))
-        return;
+        if ((n != 1) || (rx[0] != tests[i])) return;
     }
 
     // Got this far? We're good to go
@@ -415,7 +408,7 @@ int i2c_commands(I2CDriver *sd, int argc, char *argv[]) {
             case 'c':   // CAPTURE
                 i2c_capture(sd);
                 break;
-
+                
             default:    // NO COMMAND/UNKNOWN COMMAND
                 printBadCommandHelp(token);
                 return 1;
@@ -426,12 +419,13 @@ int i2c_commands(I2CDriver *sd, int argc, char *argv[]) {
 }
 
 
-static void charCommand(I2CDriver *sd, char c) {
+void charCommand(I2CDriver *sd, char c) {
+    // Write a single-byte command to the serial port
     writeToSerialPort(sd->port, (uint8_t*)&c, 1);
 }
 
 
-static void printBadCommandHelp(char* token) {
+void printBadCommandHelp(char* token) {
     fprintf(stderr, "Bad command '%s'\n", token);
     fprintf(stderr, "\n");
     fprintf(stderr, "Commands are:");

@@ -24,8 +24,13 @@ int main(int argc, char* argv[]) {
         // Connect...
         // ...arg #1 is the device path
         i2c_connect(&i2c, argv[1]);
-        if (!i2c.connected) exit(1);
-
+        if (!i2c.connected) {
+            char ebuffer[64] = {0};
+            sprintf(ebuffer, "Could not connect to %s\n", argv[1]);
+            print_error(ebuffer);
+            exit(1);
+        }
+        
         // Check for an alternative I2C address
         int delta = 2;
         if (argc > 2) {
@@ -43,7 +48,7 @@ int main(int argc, char* argv[]) {
                 delta = 3;
             }
         }
-
+        
         // ...and issue passed in commands/data
         exit(matrix_commands(argc, argv, delta));
     }
@@ -244,6 +249,15 @@ int matrix_commands(int argc, char* argv[], int delta) {
                         print_error("No string supplied");
                         return 1;
                     }
+                    
+                case 'z':   // TEST
+                {
+                    charCommand(&i2c, 't');
+                    uint8_t tbuffer[6] = {0};
+                    readFromSerialPort(i2c.port, tbuffer, 5);
+                    fprintf(stdout, "*** %s\n", tbuffer);
+                    break;
+                }
 
 
                 default:
