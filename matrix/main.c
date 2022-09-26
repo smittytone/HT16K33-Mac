@@ -9,12 +9,11 @@
 #include "main.h"
 
 
-I2CDriver i2c;
-int i2c_address = HT16K33_I2C_ADDR;
-
-
 int main(int argc, char* argv[]) {
-
+    
+    I2CDriver i2c;
+    uint32_t i2c_address = HT16K33_I2C_ADDR;
+    
     // Process arguments
     if (argc < 2) {
         // Insufficient args -- bail
@@ -49,13 +48,15 @@ int main(int argc, char* argv[]) {
             }
         }
         
+        HT16K33_init(&i2c, i2c_address, 3);
+        
         // ...and issue passed in commands/data
-        exit(matrix_commands(argc, argv, delta));
+        exit(matrix_commands(&i2c, argc, argv, delta));
     }
 }
 
 
-int matrix_commands(int argc, char* argv[], int delta) {
+int matrix_commands(I2CDriver *i2c, int argc, char* argv[], int delta) {
     for (int i = delta ; i < argc ; ++i) {
         char* token = argv[i];
 
@@ -223,7 +224,24 @@ int matrix_commands(int argc, char* argv[], int delta) {
                         return 1;
                     }
                     break;
-
+                    
+                case 'r':   // ROTATE AND SET ANGLE
+                    {
+                        if (i < argc - 1) {
+                            long angle = 0;
+                            token = argv[++i];
+                            if (token[0] != '-') {
+                                angle = strtol(token, NULL, 0);
+                            } else {
+                                i -= 1;
+                            }
+                            
+                            // Perform the action
+                            HT16K33_set_angle((uint8_t)angle);
+                        }
+                    }
+                    break;
+                    
                 case 't':     // TEXT STRING
                     {
                         // Get one required argument
@@ -252,9 +270,9 @@ int matrix_commands(int argc, char* argv[], int delta) {
                     
                 case 'z':   // TEST
                 {
-                    charCommand(&i2c, 't');
+                    charCommand(i2c, 't');
                     uint8_t tbuffer[6] = {0};
-                    readFromSerialPort(i2c.port, tbuffer, 5);
+                    readFromSerialPort(i2c->port, tbuffer, 5);
                     fprintf(stdout, "*** %s\n", tbuffer);
                     break;
                 }
