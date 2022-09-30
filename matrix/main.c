@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     if (argc < 2) {
         // Insufficient args -- bail
         printf("Usage: matrix <DEVICE_PATH> <commands>\n");
-        exit(1);
+        return 1;
     } else {
         // Connect...
         // ...arg #1 is the device path
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
             char ebuffer[64] = {0};
             sprintf(ebuffer, "Could not connect to %s\n", argv[1]);
             print_error(ebuffer);
-            exit(1);
+            return 1;
         }
         
         // Check for an alternative I2C address
@@ -48,10 +48,11 @@ int main(int argc, char* argv[]) {
             }
         }
         
+        // Initialize the display
         HT16K33_init(&i2c, i2c_address, 3);
         
         // ...and issue passed in commands/data
-        exit(matrix_commands(&i2c, argc, argv, delta));
+        return matrix_commands(&i2c, argc, argv, delta);
     }
 }
 
@@ -267,16 +268,20 @@ int matrix_commands(I2CDriver *i2c, int argc, char* argv[], int delta) {
                         print_error("No string supplied");
                         return 1;
                     }
+                
+                case 'w':   // WIPE THE SCREEN
+                    HT16K33_clear_buffer();
+                    HT16K33_draw();
+                    break;
                     
                 case 'z':   // TEST
-                {
-                    charCommand(i2c, 't');
-                    uint8_t tbuffer[6] = {0};
-                    readFromSerialPort(i2c->port, tbuffer, 5);
-                    fprintf(stdout, "*** %s\n", tbuffer);
-                    break;
-                }
-
+                    {
+                        charCommand(i2c, 't');
+                        uint8_t tbuffer[6] = {0};
+                        readFromSerialPort(i2c->port, tbuffer, 5);
+                        fprintf(stdout, "TEST: %s\n", tbuffer);
+                        break;
+                    }
 
                 default:
                     // ERROR
