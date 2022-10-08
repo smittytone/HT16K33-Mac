@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/smitty/GitHub/mac-i2c-driver/matrix.xcodeproj">
+      location = "self:/Users/smitty/GitHub/ht16k33-mac/matrix.xcodeproj">
    </FileRef>
 </Workspace>

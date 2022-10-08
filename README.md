@@ -12,7 +12,7 @@ You use the driver with this command-line call:
 matrix {device} [I2C address] [commands]
 ```
 
-Arguments in braces `{}` are required; those in square brackets `[]` are optional.
+Arguments in braces `{}` are required; those in square brackets `[\]` are optional.
 
 `{device}` is the path to the I2C Mini’s device file, eg. `/dev/cu.usbserial-DO029IEZ`.
 
@@ -22,7 +22,7 @@ Arguments in braces `{}` are required; those in square brackets `[]` are optiona
 
 ### Commands
 
-These are the currently supported commands. Arguments in braces `{}` are required; those in square brackets `[]` are optional.
+These are the currently supported commands. Arguments in braces `{}` are required; those in square brackets `[\]` are optional.
 
 | Command | Arguments | Description |
 | :-: | :-: | :-- |
@@ -36,7 +36,7 @@ These are the currently supported commands. Arguments in braces `{}` are require
 Multiple commands can be issued by sequencing them at the command line. For example:
 
 ```shell
-matrix /dev/cu.usbserial-DO029IEZ 0x71 -p 0 0 -p 1 1 -p 2 2 -p 3 3 -p 4 4 -p 5 5 -p 6 6 -p 7 7 
+matrix /dev/cu.usbserial-DO029IEZ 0x71 -p 0 0 -p 1 1 -p 2 2 -p 3 3 -p 4 4 -p 5 5 -p 6 6 -p 7 7
 ```
 
 You should note that the display buffer is not persisted across calls to `matrix`, so building up an image across calls will not work. The display is implicitly cleared with each new call.
